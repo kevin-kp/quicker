@@ -5,7 +5,7 @@ import { QTLS, HandshakeState, QuicTLSEvents } from '../crypto/qtls';
 import { ConnectionID, PacketNumber, Version } from '../packet/header/header.properties';
 import { Bignum } from '../types/bignum';
 import { RemoteInfo, Socket } from "dgram";
-import { Stream, StreamType, StreamState } from './stream';
+import { Stream, StreamType, StreamState, StreamEvent } from './stream';
 import { EndpointType } from '../types/endpoint.type';
 import { Constants } from '../utilities/constants';
 import { TransportParameters } from '../crypto/transport.parameters';
@@ -176,6 +176,9 @@ export class Connection extends FlowControlledObject {
             });
             stream.on(FlowControlledObjectEvents.DECREMENT_BUFFER_DATA_USED, (dataLength: number) => {
                 this.decrementBufferSizeUsed(dataLength);
+            });
+            stream.on(StreamEvent.DATA_LENGTH, (dataLength: number) => {
+                this.addLocalOffset(dataLength);
             });
         });
     }
