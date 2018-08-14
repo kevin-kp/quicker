@@ -5,7 +5,7 @@ import { QTLS, HandshakeState, QuicTLSEvents } from '../crypto/qtls';
 import { ConnectionID, PacketNumber, Version } from '../packet/header/header.properties';
 import { Bignum } from '../types/bignum';
 import { RemoteInfo, Socket } from "dgram";
-import { Stream, StreamType, StreamState } from './stream';
+import { Stream, StreamType, StreamState, StreamEvent } from './stream';
 import { EndpointType } from '../types/endpoint.type';
 import { Constants } from '../utilities/constants';
 import { TransportParameters } from '../crypto/transport.parameters';
@@ -176,6 +176,9 @@ export class Connection extends FlowControlledObject {
             });
             stream.on(FlowControlledObjectEvents.DECREMENT_BUFFER_DATA_USED, (dataLength: number) => {
                 this.decrementBufferSizeUsed(dataLength);
+            });
+            stream.on(StreamEvent.DATA_LENGTH, (dataLength: number) => {
+                this.addLocalOffset(dataLength);
             });
         });
     }
@@ -436,9 +439,6 @@ export class Connection extends FlowControlledObject {
     }
 
     public resetConnectionState() {
-        // REFACTOR TODO: when resetting due to version mismatch, we MUST NOT reset the packet number
-        // https://tools.ietf.org/html/draft-ietf-quic-transport#section-6.2.2
-        this.remotePacketNumber = new PacketNumber(new Bignum(0).toBuffer());
         this.resetOffsets();
         this.getStreamManager().getStreams().forEach((stream: Stream) => {
             stream.resetOffsets();
