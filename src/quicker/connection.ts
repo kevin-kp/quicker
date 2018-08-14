@@ -439,9 +439,6 @@ export class Connection extends FlowControlledObject {
     }
 
     public resetConnectionState() {
-        // REFACTOR TODO: when resetting due to version mismatch, we MUST NOT reset the packet number
-        // https://tools.ietf.org/html/draft-ietf-quic-transport#section-6.2.2
-        this.remotePacketNumber = new PacketNumber(new Bignum(0).toBuffer());
         this.resetOffsets();
         this.getStreamManager().getStreams().forEach((stream: Stream) => {
             stream.resetOffsets();
