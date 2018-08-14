@@ -94,6 +94,24 @@ export class Bignum {
         return bn;
     }
 
+    public or(num: number): Bignum;
+    public or(num: Bignum): Bignum;
+    public or(num: any): Bignum {
+        var bn = new Bignum(0);
+        if (num instanceof Bignum) {
+            bn.bignum = this.bignum.or(num.bignum);
+        } else {
+            bn.bignum = this.bignum.or(new BN(num));
+        }
+        return bn;
+    }
+
+    public not(): Bignum {
+        var bn = new Bignum(0);
+        bn.bignum = this.bignum.notn(this.bignum.byteLength()*8);
+        return bn;
+    }
+
     public modulo(num: number): Bignum;
     public modulo(num: Bignum): Bignum;
     public modulo(num: any): Bignum {

@@ -140,6 +140,7 @@ export class Stream extends FlowControlledObject {
 
 	private _receiveData(data: Buffer, isFin: boolean): void {
 		this.emit(StreamEvent.DATA, data);
+		this.emit(StreamEvent.DATA_LENGTH, data.byteLength);
 		this.addLocalOffset(data.byteLength);
         if (isFin) {
             this.setLocalFinalOffset(this.getLocalOffset());
@@ -227,4 +228,5 @@ export enum StreamType {
 export enum StreamEvent {
 	DATA = "stream-data",
 	END = "stream-end",
+	DATA_LENGTH = "stream-data-length"
 }
