@@ -106,33 +106,64 @@ export class PacketNumber extends BaseProperty {
         this.getProperty().toBuffer().copy(buf, 0, 8 - size, 8);
         return buf;
     }
-
+    /**
+     *  DecodePacketNumber(largest_pn, truncated_pn, pn_nbits):
+        expected_pn  = largest_pn + 1
+        pn_win       = 1 << pn_nbits
+        pn_hwin      = pn_win / 2
+        pn_mask      = pn_win - 1
+        // The incoming packet number should be greater than
+        // expected_pn - pn_hwin and less than or equal to
+        // expected_pn + pn_hwin
+        //
+        // This means we can't just strip the trailing bits from
+        // expected_pn and add the truncated_pn because that might
+        // yield a value outside the window.
+        //
+        // The following code calculates a candidate value and
+        // makes sure it's within the packet number window.
+        candidate_pn = (expected_pn & ~pn_mask) | truncated_pn
+        if candidate_pn <= expected_pn - pn_hwin:
+            return candidate_pn + pn_win
+        // Note the extra check for underflow when candidate_pn
+        // is near zero.
+        if candidate_pn > expected_pn + pn_hwin and
+            candidate_pn > pn_win:
+            return candidate_pn - pn_win
+        return candidate_pn
+     * @param packetNumber 
+     * @param size 
+     */
     public adjustNumber(packetNumber: PacketNumber, size: number) {
-        var mask = new Bignum(1);
+        var pnMask = new Bignum(1);
         for (var i = 0; i < 63; i++) {
-            mask = mask.shiftLeft(1);
+            pnMask = pnMask.shiftLeft(1);
             if (63 - i > (size * 8)) {
-                mask = mask.add(1);
+                pnMask = pnMask.add(1);
             }
         }
-        var maskedResult = this.getValue().and(mask);
-        var next = packetNumber.getValue().mask(size);
-        next = next.add(maskedResult);
-        return next;
+        var expectedPn = this.getValue().add(1);
+        var pnWin = new Bignum(1).shiftLeft(this.getBitSize(size));
+        var pnHWin = pnWin.divide(2);
+        var maskedResult = expectedPn.and(pnMask);
+        var candidatePn = packetNumber.getValue().mask(size);
+        candidatePn = candidatePn.add(maskedResult);
+        if (candidatePn.lessThanOrEqual(expectedPn.subtract(pnHWin))) {
+            return candidatePn.add(pnWin);
+        }
+        if (candidatePn.greaterThan(expectedPn.add(pnHWin)) && candidatePn.greaterThan(pnWin)) {
+            return candidatePn.subtract(pnWin);
+        }
+        return candidatePn;
     }
 
-    public getAdjustedNumber(packetNumber: PacketNumber, size: number): PacketNumber {
-        var mask = new Bignum(1);
-        for (var i = 0; i < 63; i++) {
-            mask = mask.shiftLeft(1);
-            if (63 - i > (size * 8)) {
-                mask = mask.add(1);
-            }
-        }
-        var maskedResult = this.getValue().and(mask);
-        var next = packetNumber.getValue().mask(size);
-        next = next.add(maskedResult);
-        return new PacketNumber(next.toBuffer());
+    private getBitSize(size: number) 
+    {
+        if (size == 1)
+            return 7;
+        if (size == 2)
+            return 14;
+        return 30;
     }
 }
 
