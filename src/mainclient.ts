@@ -17,43 +17,40 @@ if (isNaN(Number(port))) {
 console.log("QUICker client connecting to " + host + ":" + port);
 
 var httpHelper = new HttpHelper();
-for (var i = 0; i < 1; i++) {
-    var client = Client.connect(host, Number(port));
-    client.on(QuickerEvent.CLIENT_CONNECTED, () => {
-        var quicStream: QuicStream = client.request(httpHelper.createRequest(resource));
-        var quicStream2: QuicStream = client.request(httpHelper.createRequest(resource));
-        var bufferedData = Buffer.alloc(0);
+var client = Client.connect(host, Number(port));
+client.on(QuickerEvent.CLIENT_CONNECTED, () => {
+    var quicStream: QuicStream = client.request(httpHelper.createRequest(resource));
+    var quicStream2: QuicStream = client.request(httpHelper.createRequest(resource));
+    var bufferedData = Buffer.alloc(0);
 
-        quicStream.on(QuickerEvent.STREAM_DATA_AVAILABLE, (data: Buffer) => {
-            //bufferedData = Buffer.concat([bufferedData, data]);
-        });
-
-        quicStream.on(QuickerEvent.STREAM_END, () => {
-            //console.log(bufferedData.toString('utf8'));
-            client.close();
-        });
-        
-        /**
-         * Request resource with 0-RTT in a second connection
-         */
-        setTimeout(() => {
-            var client2 = Client.connect(host, Number(port), {
-                session: client.getSession(),
-                transportparameters: client.getTransportParameters()
-            }, httpHelper.createRequest(resource));
-            client2.on(QuickerEvent.CLIENT_CONNECTED, () => {
-                //
-            });
-        }, 10000);
+    quicStream.on(QuickerEvent.STREAM_DATA_AVAILABLE, (data: Buffer) => {
+        //bufferedData = Buffer.concat([bufferedData, data]);
     });
 
-    client.on(QuickerEvent.ERROR, (error: Error) => {
-        console.log("error");
-        console.log(error.message);
-        console.log(error.stack);
+    quicStream.on(QuickerEvent.STREAM_END, () => {
+        //console.log(bufferedData.toString('utf8'));
+        client.close();
     });
+});
 
-    client.on(QuickerEvent.CONNECTION_CLOSE, () => {
+client.on(QuickerEvent.ERROR, (error: Error) => {
+    console.log("error");
+    console.log(error.message);
+    console.log(error.stack);
+});
+
+client.once(QuickerEvent.CONNECTION_CLOSE, () => {
+    /**
+     * Request resource with 0-RTT in a second connection
+     */
+    var client2 = Client.connect(host, Number(port), {
+        session: client.getSession(),
+        transportparameters: client.getTransportParameters()
+    }, httpHelper.createRequest(resource));
+    client2.on(QuickerEvent.CLIENT_CONNECTED, () => {
+        //
+    });
+    client2.on(QuickerEvent.CONNECTION_CLOSE, () => {
         process.exit(0);
     });
-}
+});
