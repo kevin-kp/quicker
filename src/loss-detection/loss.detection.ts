@@ -276,10 +276,6 @@ export class LossDetection extends EventEmitter {
         }
 
         if (!this.lossDetectionAlarm.isRunning()) {
-            this.lossDetectionAlarm.on(AlarmEvent.TIMEOUT, () => {
-                this.lossDetectionAlarm.reset();
-                this.onLossDetectionAlarm();
-            });
             this.lossDetectionAlarm.start(alarmDuration.toNumber());
         }
     }

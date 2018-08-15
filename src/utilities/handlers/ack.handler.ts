@@ -29,6 +29,12 @@ export class AckHandler {
     public constructor(connection: Connection) {
         this.receivedPackets = {};
         this.alarm = new Alarm();
+        this.alarm.on(AlarmEvent.TIMEOUT, () => {
+            var ackFrame = this.getAckFrame(connection);
+            if (ackFrame !== undefined) {
+                connection.queueFrame(ackFrame);
+            }
+        });
     }
 
     public onPacketAcked(packet: BasePacket) {
@@ -62,7 +68,7 @@ export class AckHandler {
         if (this.onlyAckPackets()) {
             this.alarm.reset();
         } else if (!this.alarm.isRunning()) {
-            this.setAlarm(connection);
+            this.alarm.start(AckHandler.ACK_WAIT);
         }
     }
 
@@ -115,17 +121,6 @@ export class AckHandler {
             ackBlocks.push(ackBlock);
         }
         return new AckFrame(latestPacketNumber, new Bignum(ackDelay), new Bignum(ackBlockCount), firstAckBlock, ackBlocks);
-    }
-
-    private setAlarm(connection: Connection) {
-        this.alarm.on(AlarmEvent.TIMEOUT, () => {
-            var ackFrame = this.getAckFrame(connection);
-            if (ackFrame !== undefined) {
-                connection.queueFrame(ackFrame);
-            }
-
-        });
-        this.alarm.start(AckHandler.ACK_WAIT);
     }
 
     private onlyAckPackets(): boolean {

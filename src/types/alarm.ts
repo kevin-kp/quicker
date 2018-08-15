@@ -13,12 +13,17 @@ export class Alarm extends EventEmitter {
     }
 
     public reset() {
-        clearTimeout(this.timer);
-        this.removeAllListeners();
+        if (!this.isRunning()) {
+            return;
+        }
         this.running = false;
+        clearTimeout(this.timer);
     }
 
     public start(timeInMs: number) {
+        if (this.isRunning()) {
+            return;
+        }
         this.running = true;
         this.timer = global.setTimeout(() => {
             this.onTimeout();
@@ -26,8 +31,10 @@ export class Alarm extends EventEmitter {
     }
 
     private onTimeout() {
-        this.running = false;
-        this.emit(AlarmEvent.TIMEOUT);
+        if (this.isRunning()) {
+            this.running = false;
+            this.emit(AlarmEvent.TIMEOUT);
+        }
     }
 
     public isRunning(): boolean {

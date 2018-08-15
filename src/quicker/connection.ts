@@ -87,7 +87,15 @@ export class Connection extends FlowControlledObject {
         this.socket = socket;
         this.endpointType = endpointType;
         this.idleTimeoutAlarm = new Alarm();
+        this.idleTimeoutAlarm.on(AlarmEvent.TIMEOUT, () => {
+            this.state = ConnectionState.Draining;
+            this.closeRequested();
+            this.emit(ConnectionEvent.DRAINING);
+        })
         this.transmissionAlarm = new Alarm();
+        this.transmissionAlarm.on(AlarmEvent.TIMEOUT, () => {
+            this.sendPackets();
+        });
         this.localMaxStreamUniBlocked = false;
         this.localMaxStreamBidiBlocked = false;
         this.closeSentCount = 0;
@@ -456,7 +464,7 @@ export class Connection extends FlowControlledObject {
             this.flowControl.queueFrame(baseFrame);
         });
         if (!this.transmissionAlarm.isRunning()) {
-            this.startTransmissionAlarm();
+            this.transmissionAlarm.start(40);
         }
     }
 
@@ -566,13 +574,6 @@ export class Connection extends FlowControlledObject {
         this.congestionControl.queuePackets(packets);
     }
 
-    private startTransmissionAlarm(): void {
-        this.transmissionAlarm.on(AlarmEvent.TIMEOUT, () => {
-            this.sendPackets();
-        });
-        this.transmissionAlarm.start(40);
-    }
-
     public attemptEarlyData(earlyData?: Buffer): boolean {
         if (earlyData !== undefined) {
             this.earlyData = earlyData;
@@ -652,11 +653,6 @@ export class Connection extends FlowControlledObject {
 
     public startIdleAlarm(): void {
         var time = this.localTransportParameters === undefined ? Constants.DEFAULT_IDLE_TIMEOUT : this.getLocalTransportParameter(TransportParameterType.IDLE_TIMEOUT);
-        this.idleTimeoutAlarm.on(AlarmEvent.TIMEOUT, () => {
-            this.state = ConnectionState.Draining;
-            this.closeRequested();
-            this.emit(ConnectionEvent.DRAINING);
-        })
         this.idleTimeoutAlarm.start(time * 1000);
     }
 }
