@@ -235,18 +235,18 @@ export class AEAD {
         this.clearTextClientKey = hkdf.qhkdfExpandLabel(clearTextClientSecret, Constants.PACKET_PROTECTION_KEY_LABEL, Constants.DEFAULT_AEAD_LENGTH);
         this.clearTextClientIv = hkdf.qhkdfExpandLabel(clearTextClientSecret, Constants.PACKET_PROTECTION_IV_LABEL, Constants.IV_LENGTH);
         this.clearTextClientPn = hkdf.qhkdfExpandLabel(clearTextClientSecret, Constants.PACKET_PROTECTION_PN_LABEL, Constants.DEFAULT_AEAD_LENGTH);
-        console.log("clear text client key: " + this.clearTextClientKey.toString('hex'));
-        console.log("clear text client key: " + this.clearTextClientIv.toString('hex'));
-        console.log("clear text client pn: " + this.clearTextClientPn.toString('hex'));
+        //console.log("clear text client key: " + this.clearTextClientKey.toString('hex'));
+        //console.log("clear text client key: " + this.clearTextClientIv.toString('hex'));
+        //console.log("clear text client pn: " + this.clearTextClientPn.toString('hex'));
 
         // Generate server key, IV, PN
         var clearTextServerSecret = this.getClearTextSecret(hkdf, connectionID, version, EndpointType.Server);
         this.clearTextServerKey = hkdf.qhkdfExpandLabel(clearTextServerSecret, Constants.PACKET_PROTECTION_KEY_LABEL, Constants.DEFAULT_AEAD_LENGTH);
         this.clearTextServerIv = hkdf.qhkdfExpandLabel(clearTextServerSecret, Constants.PACKET_PROTECTION_IV_LABEL, Constants.IV_LENGTH);
         this.clearTextServerPn = hkdf.qhkdfExpandLabel(clearTextServerSecret, Constants.PACKET_PROTECTION_PN_LABEL, Constants.DEFAULT_AEAD_LENGTH);
-        console.log("clear text server key: " + this.clearTextServerKey.toString('hex'));
-        console.log("clear text server iv: " + this.clearTextServerIv.toString('hex'));
-        console.log("clear text server pn: " + this.clearTextServerPn.toString('hex'));
+        //console.log("clear text server key: " + this.clearTextServerKey.toString('hex'));
+        //console.log("clear text server iv: " + this.clearTextServerIv.toString('hex'));
+        //console.log("clear text server pn: " + this.clearTextServerPn.toString('hex'));
 
         // Keep track of what version is used to generate these keys
         this.usedVersion = version;
@@ -265,9 +265,9 @@ export class AEAD {
         this.protected0RTTKey = hkdf.qhkdfExpandLabel(this.protected0RTTClientSecret, Constants.PACKET_PROTECTION_KEY_LABEL, this.qtls.getCipher().getAeadKeyLength());
         this.protected0RTTIv = hkdf.qhkdfExpandLabel(this.protected0RTTClientSecret, Constants.PACKET_PROTECTION_IV_LABEL, Constants.IV_LENGTH);
         this.protected0RTTPn = hkdf.qhkdfExpandLabel(this.protected0RTTClientSecret, Constants.PACKET_PROTECTION_PN_LABEL, this.qtls.getCipher().getAeadKeyLength());
-        console.log("protected0RTT client key: " + this.protected0RTTKey.toString('hex'));
-        console.log("protected0RTT client iv: " + this.protected0RTTIv.toString('hex'));
-        console.log("protected0RTT client pn: " + this.protected0RTTPn.toString('hex'));
+        //console.log("protected0RTT client key: " + this.protected0RTTKey.toString('hex'));
+        //console.log("protected0RTT client iv: " + this.protected0RTTIv.toString('hex'));
+        //console.log("protected0RTT client pn: " + this.protected0RTTPn.toString('hex'));
     }
 
     public updateProtected1RTTSecret(): void {
@@ -282,17 +282,17 @@ export class AEAD {
         this.protected1RTTClientKey = hkdf.qhkdfExpandLabel(this.protected1RTTClientSecret, Constants.PACKET_PROTECTION_KEY_LABEL, qtls.getCipher().getAeadKeyLength());
         this.protected1RTTClientIv = hkdf.qhkdfExpandLabel(this.protected1RTTClientSecret, Constants.PACKET_PROTECTION_IV_LABEL, Constants.IV_LENGTH);
         this.protected1RTTClientPn = hkdf.qhkdfExpandLabel(this.protected1RTTClientSecret, Constants.PACKET_PROTECTION_PN_LABEL, qtls.getCipher().getAeadKeyLength());
-        console.log("protected1RTT client key: " + this.protected1RTTClientKey.toString('hex'));
-        console.log("protected1RTT client iv: " + this.protected1RTTClientIv.toString('hex'));
-        console.log("protected1RTT client pn: " + this.protected1RTTClientPn.toString('hex'));
+        //console.log("protected1RTT client key: " + this.protected1RTTClientKey.toString('hex'));
+        //console.log("protected1RTT client iv: " + this.protected1RTTClientIv.toString('hex'));
+        //console.log("protected1RTT client pn: " + this.protected1RTTClientPn.toString('hex'));
 
         // Generate Server key, IV, PN
         this.protected1RTTServerKey = hkdf.qhkdfExpandLabel(this.protected1RTTServerSecret, Constants.PACKET_PROTECTION_KEY_LABEL, qtls.getCipher().getAeadKeyLength());
         this.protected1RTTServerIv = hkdf.qhkdfExpandLabel(this.protected1RTTServerSecret, Constants.PACKET_PROTECTION_IV_LABEL, Constants.IV_LENGTH);
         this.protected1RTTServerPn = hkdf.qhkdfExpandLabel(this.protected1RTTServerSecret, Constants.PACKET_PROTECTION_PN_LABEL, qtls.getCipher().getAeadKeyLength());
-        console.log("protected1RTT server key: " + this.protected1RTTServerKey.toString('hex'));
-        console.log("protected1RTT server iv: " + this.protected1RTTServerIv.toString('hex'));
-        console.log("protected1RTT server pn: " + this.protected1RTTServerPn.toString('hex'));
+        //console.log("protected1RTT server key: " + this.protected1RTTServerKey.toString('hex'));
+        //console.log("protected1RTT server iv: " + this.protected1RTTServerIv.toString('hex'));
+        //console.log("protected1RTT server pn: " + this.protected1RTTServerPn.toString('hex'));
     }
 
     /**
