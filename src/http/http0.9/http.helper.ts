@@ -17,9 +17,9 @@ export class HttpHelper {
 
     public handleRequest(data: Buffer): Buffer {
         var request = this.parse(data);
-        var file = resolve(__dirname) + "/www" + request;
+        var file = "/www" + request;
         if (!existsSync(file)) {
-            file = resolve(__dirname) + "/www/notfound.html";
+            file = "/www/notfound.html";
         }
         return readFileSync(file);
     }
