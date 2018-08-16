@@ -2,7 +2,7 @@ import { Client } from "./quicker/client";
 import { HttpHelper } from "./http/http0.9/http.helper";
 import { QuicStream } from "./quicker/quic.stream";
 import { QuickerEvent } from "./quicker/quicker.event";
-
+import { Alarm, AlarmEvent } from "./types/alarm";
 
 
 let host = process.argv[2] || "127.0.0.1";
@@ -42,7 +42,7 @@ client.once(QuickerEvent.CONNECTION_CLOSE, () => {
     /**
      * Request resource with 0-RTT in a second connection
      */
-    var client2 = Client.connect(host, Number(port), {
+    /*var client2 = Client.connect(host, Number(port), {
         session: client.getSession(),
         transportparameters: client.getTransportParameters()
     }, httpHelper.createRequest(resource));
@@ -51,5 +51,6 @@ client.once(QuickerEvent.CONNECTION_CLOSE, () => {
     });
     client2.on(QuickerEvent.CONNECTION_CLOSE, () => {
         process.exit(0);
-    });
+    });*/
+    process.exit(0);
 });
