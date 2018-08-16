@@ -26,7 +26,7 @@ export class RetryPacket extends BaseEncryptedPacket {
 
     protected getValidFrameTypes(): FrameType[] {
         return [
-            FrameType.STREAM, FrameType.ACK
+            FrameType.STREAM, FrameType.ACK, FrameType.PADDING
         ];
     }
 }
