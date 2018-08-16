@@ -36,6 +36,7 @@ client.on(QuickerEvent.ERROR, (error: Error) => {
     console.log("error");
     console.log(error.message);
     console.log(error.stack);
+    process.exit(0);
 });
 
 client.once(QuickerEvent.CONNECTION_CLOSE, () => {
