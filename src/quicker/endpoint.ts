@@ -41,8 +41,8 @@ export abstract class Endpoint extends EventEmitter {
     }
 
     protected handleError(connection: Connection, error: any): any {
-        console.log(error.message);
-        console.log(error.stack);
+        //console.log(error.message);
+        //console.log(error.stack);
 
         var closeFrame: ConnectionCloseFrame;
         var packet: BaseEncryptedPacket;

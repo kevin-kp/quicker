@@ -10,6 +10,7 @@ import { VLIE } from "../../crypto/vlie";
 import { Bignum } from "../../types/bignum";
 import { VersionValidation } from "../validation/version.validation";
 import { VersionNegotiationHeader } from "../../packet/header/version.negotiation.header";
+import { VerboseLogging } from "../logging/verbose.logging";
 
 
 export class HeaderParser {
@@ -213,13 +214,13 @@ export class HeaderParser {
         var spinBit: boolean = (type & 0x04) === 0x04;        // 6th, 7th and 8th bit reserved for experimentation 
 
         if (!thirdBitCheck || !fourthBitCheck || fifthBitCheck) {
-            console.log("bit check failed in the first octet");
+            VerboseLogging.warn("bit check failed in the first octet");
             if (thirdBitCheck)
-                console.log("third bit must be 1");
+                VerboseLogging.warn("third bit must be 1");
             if (fourthBitCheck)
-                console.log("fourth bit must be 1");
+                VerboseLogging.warn("fourth bit must be 1");
             if (!fifthBitCheck)
-                console.log("fifth bit must be 0");
+                VerboseLogging.warn("fifth bit must be 0");
             //throw new QuicError(ConnectionErrorCodes.PROTOCOL_VIOLATION)
         }
 

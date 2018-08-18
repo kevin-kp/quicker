@@ -3,6 +3,7 @@ import { HttpHelper } from "./http/http0.9/http.helper";
 import { QuicStream } from "./quicker/quic.stream";
 import { QuickerEvent } from "./quicker/quicker.event";
 import { Alarm, AlarmEvent } from "./types/alarm";
+import { VerboseLogging } from "./utilities/logging/verbose.logging";
 
 
 let host = process.argv[2] || "127.0.0.1";
@@ -10,11 +11,11 @@ let port = process.argv[3] || 4433;
 let resource = process.argv[4] || "index.html";
 
 if (isNaN(Number(port))) {
-    console.log("port must be a number: node ./mainclient.js 127.0.0.1 4433 index.html");
+    VerboseLogging.error("port must be a number: node ./mainclient.js 127.0.0.1 4433 index.html");
     process.exit(-1);
 }
 
-console.log("QUICker client connecting to " + host + ":" + port);
+VerboseLogging.info("QUICker client connecting to " + host + ":" + port);
 
 var httpHelper = new HttpHelper();
 var client = Client.connect(host, Number(port));
@@ -33,9 +34,9 @@ client.on(QuickerEvent.CLIENT_CONNECTED, () => {
 });
 
 client.on(QuickerEvent.ERROR, (error: Error) => {
-    console.log("error");
-    console.log(error.message);
-    console.log(error.stack);
+    VerboseLogging.error("error");
+    VerboseLogging.error(error.message);
+    VerboseLogging.error(error.stack == undefined ? "unknown stack" : error.stack);
     process.exit(0);
 });
 
