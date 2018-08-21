@@ -7,7 +7,7 @@ export class Constants {
     ];
 
     public static readonly LOG_TYPE = "stdout";
-    public static readonly LOG_LEVEL = 'error';
+    public static readonly LOG_LEVEL = 'OFF';
     public static readonly LOG_LARGE_BUFFER_DATA = true;
     public static readonly MAX_LOG_FILE_SIZE = 20971520;
 
@@ -83,7 +83,7 @@ export class Constants {
      * Method for testing purposes only
      */
     public static getActiveVersion(): string {
-        return 'bababa0c';
+        return 'ff00000c';
     }
 
     public static getVersionSalt(version: string): string {
