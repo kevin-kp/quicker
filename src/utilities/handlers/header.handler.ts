@@ -55,6 +55,8 @@ export class HeaderHandler {
         header.getPacketNumber().setValue(decodedPnVlieOffset.value);
         headerOffset.offset = headerOffset.offset - 4 + decodedPnVlieOffset.offset;
         header.setParsedBuffer(Buffer.concat([header.getParsedBuffer().slice(0, header.getParsedBuffer().byteLength - 4), decodedPnVlieOffset.value.toBuffer(decodedPnVlieOffset.offset)]));
+        
+        console.log("pn: " + header.getPacketNumber().getValue().toDecimalString());
 
         // adjust remote packet number
         if (connection.getRemotePacketNumber() === undefined) {
